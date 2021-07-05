@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export function ContentHeader({ lang, pages }) {
+export function ContentHeader({ lang, pages, languages }) {
     const classes = useStyles();
     return (
         <React.Fragment>
@@ -31,21 +31,13 @@ export function ContentHeader({ lang, pages }) {
                 justify="flex-end"
                 alignItems="baseline"
                 className={classes.languageSelector}>
-                <Grid item className={classes.languageItem}>
-                    <NextLink href={`/en`} passHref>
-                        <MUILink>English</MUILink>
-                    </NextLink>
-                </Grid>
-                <Grid item className={classes.languageItem}>
-                    <NextLink href={`/fr`} passHref>
-                        <MUILink>French</MUILink>
-                    </NextLink>
-                </Grid>
-                <Grid item className={classes.languageItem}>
-                    <NextLink href={`/es`} passHref>
-                        <MUILink>Spanish</MUILink>
-                    </NextLink>
-                </Grid>
+                {languages.map((language) => (
+                    <Grid item className={classes.languageItem} key={language.id}>
+                        <NextLink href={`/${language.id}`} passHref>
+                            <MUILink>{language.title}</MUILink>
+                        </NextLink>
+                    </Grid>
+                ))}
             </Grid>
             <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
                 {pages.map((section) => (
@@ -55,7 +47,7 @@ export function ContentHeader({ lang, pages }) {
                             noWrap
                             variant="body2"
                             className={classes.toolbarLink}>
-                            {section.title}
+                            {section.title ?? ''}
                         </MUILink>
                     </NextLink>
                 ))}

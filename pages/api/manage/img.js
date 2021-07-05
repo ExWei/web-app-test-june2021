@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
         const contents = await fs.readFile(data.files.Img.path);
 
-        await saveImage(data.fields.lang, data.fields.id, contents, data.files.Img.type);
+        await saveImage(data.fields.id, contents, data.files.Img.type);
         await clearAllCache();
         res.json({});
     } catch (e) {

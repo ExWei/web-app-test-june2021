@@ -2,10 +2,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SaveIcon from '@material-ui/icons/Save';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -79,18 +75,8 @@ export default function Page(props) {
     };
 
     return (
-        <AdminPage>
+        <AdminPage name="Edit page">
             <form>
-                <FormControl>
-                    <InputLabel>Language</InputLabel>
-                    <Select
-                        value={activeLanguage}
-                        onChange={(e) => setActiveLanguage(e.target.value)}>
-                        <MenuItem value={'en'}>English</MenuItem>
-                        <MenuItem value={'fr'}>French</MenuItem>
-                        <MenuItem value={'es'}>Spanish</MenuItem>
-                    </Select>
-                </FormControl>
                 <div className={classes.breakArea}>
                     <TextField
                         margin="dense"
@@ -98,8 +84,8 @@ export default function Page(props) {
                         label="Title"
                         required
                         fullWidth
-                        name={`${activeLanguage}Title`}
-                        value={page[`${activeLanguage}Title`]}
+                        name="title"
+                        value={page.title}
                         onChange={handleChange}
                     />
                     <TextField
@@ -110,8 +96,8 @@ export default function Page(props) {
                         fullWidth
                         multiline
                         rows={6}
-                        name={`${activeLanguage}Paragraph`}
-                        value={page[`${activeLanguage}Paragraph`]}
+                        name="paragraph"
+                        value={page.paragraph}
                         onChange={handleChange}
                     />
                     <TextField
@@ -120,8 +106,8 @@ export default function Page(props) {
                         label="Meta Title"
                         required
                         fullWidth
-                        name={`${activeLanguage}MetaTitle`}
-                        value={page[`${activeLanguage}MetaTitle`]}
+                        name="metaTitle"
+                        value={page.metaTitle}
                         onChange={handleChange}
                     />
                     <TextField
@@ -130,22 +116,21 @@ export default function Page(props) {
                         label="Meta Description"
                         required
                         fullWidth
-                        name={`${activeLanguage}MetaDescription`}
-                        value={page[`${activeLanguage}MetaDescription`]}
+                        name="metaDescription"
+                        value={page.metaDescription}
                         onChange={handleChange}
                     />
                     <TextField
                         label="URL"
-                        disabled={page.id == 'index'}
+                        disabled={page.langDefault === 1}
                         value={
-                            page.id === 'index'
-                                ? 'Not editable for the index page'
-                                : page[`${activeLanguage}URL`]
+                            page.langDefault === 1 ? 'Not editable for the index page' : page.URL
                         }
-                        name={`${activeLanguage}URL`}
+                        name="URL"
                         onChange={handleChange}
                         fullWidth
                         required
+                        type="text"
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">{activeLanguage}/</InputAdornment>

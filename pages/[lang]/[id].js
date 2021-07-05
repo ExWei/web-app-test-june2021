@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { getPagesURLs, getPageByURL } from '../../lib/db';
+import { getPagesURLs, getPageByURL, getLanguages } from '../../lib/db';
 import { ContentPage } from '../../src/ContentPage';
 
 // localized second level page
@@ -22,7 +22,8 @@ export async function getServerSideProps(context) {
     return {
         props: {
             pages: await getPagesURLs(context.params.lang),
-            content
+            content,
+            languages: await getLanguages()
         }
     };
 }

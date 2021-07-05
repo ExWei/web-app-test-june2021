@@ -9,14 +9,22 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 import { useRouter } from 'next/router';
-import { getPagesURLs } from '../../lib/db';
+import { getLanguages, getPagesURLs } from '../../lib/db';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     table: {
         minWidth: 650
+    },
+    langFormControl: {
+        margin: theme.spacing(1),
+        minWidth: 120
     }
-});
+}));
 
 // admin index page
 export default function Page(props) {
@@ -27,14 +35,47 @@ export default function Page(props) {
         router.push(`/admin/edit/${id}`);
     };
 
+    const handleLanguageSelect = (lang) => {
+        router.replace(`/admin?lang=${lang}`); // refresh page with new lang params to rerun getServerSideProps
+    };
+
+    const addNewPage = async () => {
+        // create a new empty page and then redirect to the Page Edit admin screen
+        const res = await fetch('/api/manage/createPage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ lang: props.lang })
+        });
+        const data = await res.json();
+        router.push(`/admin/edit/${data.id}`);
+    };
+
     return (
-        <AdminPage>
+        <AdminPage name="Pages" fabAction={addNewPage}>
+            <FormControl className={classes.langFormControl}>
+                <InputLabel id="demo-simple-select-label">Language</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={props.lang}
+                    onChange={(e) => handleLanguageSelect(e.target.value)}>
+                    {props.languages.map((lang) => (
+                        <MenuItem key={lang.id} value={lang.id}>
+                            {lang.title}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>id</TableCell>
-                            <TableCell align="right">Title</TableCell>
+                            <TableCell>Title</TableCell>
+                            <TableCell>Language</TableCell>
+                            <TableCell>URL</TableCell>
                             <TableCell align="right">Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -44,7 +85,9 @@ export default function Page(props) {
                                 <TableCell component="th" scope="row">
                                     {row.id}
                                 </TableCell>
-                                <TableCell align="right">{row.title}</TableCell>
+                                <TableCell>{row.title}</TableCell>
+                                <TableCell>{row.lang}</TableCell>
+                                <TableCell>/{row.URL}</TableCell>
                                 <TableCell align="right">
                                     <Button
                                         variant="contained"
@@ -63,9 +106,12 @@ export default function Page(props) {
 }
 
 export async function getServerSideProps(context) {
+    const lang = context.query.lang ?? 'en';
     return {
         props: {
-            pages: await getPagesURLs('en')
+            pages: await getPagesURLs(lang),
+            languages: await getLanguages(),
+            lang
         }
     };
 }
